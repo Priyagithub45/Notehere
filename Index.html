@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NoteHere - Home Feed</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background:#E6F0FA;
+    }
+    header {
+  background-color: #3498db;
+  padding: 15px 20px;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+nav a {
+  margin-left: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+    h1 {
+      text-align: center;
+    }
+    #complimentForm {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #complimentInput {
+      width: 60%;
+      padding: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .note-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ddd;
+    }
+    .username {
+      font-weight: bold;
+    }
+    .timestamp {
+      font-size: 0.85em;
+      color: #888;
+      margin-left: auto;
+    }
+    .like-btn {
+      margin-top: 10px;
+      align-self: flex-start;
+      background: none;
+      border: none;
+      font-size: 1em;
+      color: #e74c3c;
+      cursor: pointer;
+    }
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <div class="navbar">
+    <div class="logo">NoteHere</div>
+    <nav>
+      <a href="Index.html">Home</a>
+     <a href="Post.html">Post</a>
+     <a href="Profile.html">Profile </a>
+      <a href="Login.html">Login</a>
+    </nav>
+  </div>
+</header>
+
+  <h1>NoteHere</h1>
+
+  <form id="complimentForm">
+    <input type="text" id="complimentInput" placeholder="Write a note here..." required />
+    <button type="submit">Add Note</button>
+  </form>
+
+  <ul id="complimentList"></ul>
+
+  <!-- Floating action button -->
+  <button class="fab" onclick="location.href='/post'">+</button>
+
+<script>
+  const API_URL = 'http://localhost:5000/compliments';
+
+  function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  }
+
+  function loadCompliments() {
+    axios.get(API_URL)
+      .then(res => {
+        const list = document.getElementById('complimentList');
+        list.innerHTML = '';
+        res.data.reverse().forEach(c => {
+          const li = document.createElement('li');
+
+          // Note header
+          const header = document.createElement('div');
+          header.className = 'note-header';
+
+          const avatar = document.createElement('div');
+          avatar.className = 'avatar';
+          header.appendChild(avatar);
+
+          const username = document.createElement('span');
+          username.className = 'username';
+          username.textContent = c.author || 'Anonymous';
+          header.appendChild(username);
+
+          const time = document.createElement('span');
+          time.className = 'timestamp';
+          time.textContent = formatTime(c.createdAt || Date.now());
+          header.appendChild(time);
+
+          li.appendChild(header);
+
+          // Note content
+          const noteText = document.createElement('p');
+          noteText.textContent = c.text;
+          li.appendChild(noteText);
+
+          // Like button
+          const likeBtn = document.createElement('button');
+          likeBtn.className = 'like-btn';
+          likeBtn.innerHTML = `❤️ ${c.likes || 0}`;
+          likeBtn.onclick = () => {
+            axios.post(`${API_URL}/${c._id}/like`)
+              .then(() => loadCompliments());
+          };
+          li.appendChild(likeBtn);
+
+          list.appendChild(li);
+        });
+      })
+      .catch(console.error);
+  }
+
+  document.getElementById('complimentForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const text = document.getElementById('complimentInput').value;
+
+  // ✅ Get logged-in user from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  // const username = user ? user.username : "Anonymous";
+
+  // ✅ Send username with the post request
+  // axios.post(API_URL, { text, username })
+  const author = user ? user.name : "Anonymous";
+  axios.post(API_URL, { text, author })
+    .then(() => {
+      document.getElementById('complimentInput').value = '';
+      loadCompliments();
+    })
+    .catch(console.error);
+});
+</script>
+</body>
+</html>

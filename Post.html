@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NoteHere - Post a Note</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    /* Shared Header Style */
+    header {
+      background-color:#3498db;
+      padding: 15px 20px;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav a {
+      margin-left: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Post Page Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background:#E6F0FA;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      resize: vertical;
+      font-size: 1em;
+      margin-bottom: 15px;
+    }
+
+    select, input[type="checkbox"] {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .success {
+      text-align: center;
+      color: green;
+      margin-top: 15px;
+    }
+
+    .error {
+      text-align: center;
+      color: red;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Header (Copied from index.html) -->
+  <header>
+    <div class="navbar">
+      <div class="logo">NoteHere</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="Post.html">Post</a>
+        <a href="Profile.html">Profile </a>
+        <a href="/login">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="margin-left: 20px; margin-top: -10px; margin-bottom: 20px;">
+  <button type="button" id="createRoomBtn" style="
+    width: 15%;
+    padding: 12px;
+    font-size: 1em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+  ">＋ Create New Room</button>
+</div>
+  <h1>Post a Note</h1>
+
+  <form id="postForm">
+    <label for="noteText">Your Note</label>
+    <textarea id="noteText" placeholder="Write something nice..." required></textarea>
+
+    <label for="roomSelect">Choose a Room</label>
+    <select id="roomSelect">
+      <option value="">-- Select Room (optional) --</option>
+      <option value="Friends">Friends</option>
+      <option value="Classroom">Classroom</option>
+      <option value="Work">Work</option>
+    </select>
+
+    <div class="checkbox-label">
+      <input type="checkbox" id="anonymousCheckbox" />
+      <label for="anonymousCheckbox">Post as Anonymous</label>
+    </div>
+
+    <button type="submit">Submit Note</button>
+
+    <div id="message"></div>
+  </form>
+  
+  <!-- <script>
+    const API_URL = 'http://localhost:5000/compliments';
+
+    document.getElementById('postForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const noteText = document.getElementById('noteText').value.trim();
+      const room = document.getElementById('roomSelect').value;
+      const user = JSON.parse(localStorage.getItem("noteHereUser"));
+
+
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = '';
+
+      if (!noteText) {
+        messageDiv.textContent = 'Note cannot be empty.';
+        messageDiv.className = 'error';
+        return;
+      }
+
+      axios.post(API_URL, {
+        text: noteText,
+        room: room,
+        isAnonymous: isAnonymous,
+        author: isAnonymous ? "Anonymous" : user?.name || "Guest"
+      })
+      .then(() => {
+        messageDiv.textContent = 'Note posted successfully!';
+        messageDiv.className = 'success';
+
+        document.getElementById('noteText').value = '';
+        document.getElementById('roomSelect').value = '';
+        document.getElementById('anonymousCheckbox').checked = false;
+
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      })
+      .catch(() => {
+        messageDiv.textContent = 'Failed to post note. Try again.';
+        messageDiv.className = 'error';
+      });
+    });
+
+    document.getElementById('createRoomBtn').addEventListener('click', () => {
+  const newRoom = prompt('Enter a new room name:');
+  if (newRoom) {
+    const roomSelect = document.getElementById('roomSelect');
+    const option = document.createElement('option');
+    option.value = newRoom;
+    option.textContent = newRoom;
+    roomSelect.appendChild(option);
+    roomSelect.value = newRoom;
+    alert(`Room "${newRoom}" added and selected!`);
+  }
+});
+  </script> -->
+
+<script>
+  document.getElementById('postForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const noteText = document.getElementById('noteText').value.trim();
+    const room = document.getElementById('roomSelect').value;
+    const isAnonymous = document.getElementById('anonymousCheckbox').checked;
+
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = '';
+
+    const user = JSON.parse(localStorage.getItem("noteHereUser"));
+
+    const author = isAnonymous
+      ? "Anonymous"
+      : (user && user.name ? user.name : "Guest");
+
+    axios.post('http://localhost:5000/compliments', {
+      text: noteText,
+      room: room,
+      isAnonymous,
+      author
+    })
+    .then(() => {
+      messageDiv.textContent = 'Note posted successfully!';
+      messageDiv.className = 'success';
+
+      document.getElementById('noteText').value = '';
+      document.getElementById('roomSelect').value = '';
+      document.getElementById('anonymousCheckbox').checked = false;
+
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    })
+    .catch(() => {
+      messageDiv.textContent = 'Failed to post note. Try again.';
+      messageDiv.className = 'error';
+    });
+  });
+</script>
+
+
+</body>
+</html>
