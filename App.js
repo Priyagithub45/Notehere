@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -36,7 +37,8 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB Atlas
-const mongoURI = "mongodb+srv://Priya44:Pmongodb%403@cluster0.t9gg6oh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongoURI = process.env.MONGO_URI;
+// const mongoURI = "mongodb+srv://Priya44:Pmongodb%403@cluster0.t9gg6oh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected!'))
   .catch(err => console.error(err));
