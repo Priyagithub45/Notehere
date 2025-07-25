@@ -124,7 +124,7 @@
         <a href="index.html">Home</a>
         <a href="Post.html">Post</a>
         <a href="Profile.html">Profile </a>
-        <a href="/login">Login</a>
+        <a href="Login.html">Login</a>
       </nav>
     </div>
   </header>
@@ -241,7 +241,8 @@
       ? "Anonymous"
       : (user && user.name ? user.name : "Guest");
 
-    axios.post('http://localhost:5000/compliments', {
+    // axios.post('http://localhost:5000/compliments', { 
+    axios.post('https://notehere-fsc9.onrender.com/compliments', {
       text: noteText,
       room: room,
       isAnonymous,
